@@ -17,10 +17,10 @@ public class Main {
 	 * Used as help message, if -h is passed.
 	 */
 	static final String HELP_INFORMATION = "Call like: \n"
-		+ "SodokuCreator.jar [-o <OUTFILE>, -c COUNT]\n"
-		+ "\t-h          - show this help\n"
-		+ "\t-c COUNT    - count of sodokus to generate\n"
-		+ "\t-o OUTFILE  - redirect output to OUTFILE";
+			+ "SodokuCreator.jar [-o <OUTFILE>, -c COUNT]\n"
+			+ "\t-h          - show this help\n"
+			+ "\t-c COUNT    - count of sodokus to generate\n"
+			+ "\t-o OUTFILE  - redirect output to OUTFILE";
 	
 	/**
 	 * Processes the passed arguments, create the sodoku and print them.
