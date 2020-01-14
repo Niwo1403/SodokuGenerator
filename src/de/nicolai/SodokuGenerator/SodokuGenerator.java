@@ -17,19 +17,23 @@ public class SodokuGenerator {
 	/**
 	 * All possible elements for the permutation for lines.
 	 */
-	private final String[] POSSIBLE_ELEMENTS = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+	private static final String[] POSSIBLE_ELEMENTS = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
 	/**
 	 * Count of elements in POSSIBLE_ELEMENTS.
 	 */
-	private final int POSSIBLE_ELEMENTS_COUNT_FACTORIAL = 362_880; // 362_880 == 9!
+	private static final int POSSIBLE_ELEMENTS_COUNT_FACTORIAL = 362_880; // 362_880 == 9!
 	/**
 	 * Max count of tries to find a new possible line in the sodoku.
 	 */
-	private final int MAX_TRYS = 5_000;
+	private static final int MAX_TRYS = 5_000;
 	/**
 	 * Count of lines in the sodoku.
 	 */
-	private final int LINE_COUNT = 9;
+	private static final int LINE_COUNT = 9;
+	/**
+	 * Step size for checking the squares.
+	 */
+	private static final int SQUARE_STEPS = 3;
 	/**
 	 * Saves the all possible solutions.
 	 */
@@ -37,7 +41,7 @@ public class SodokuGenerator {
 	/**
 	 * Saves all possible combinations of different lines.
 	 */
-	private String[][] lines = new String[POSSIBLE_ELEMENTS_COUNT_FACTORIAL][9];
+	private String[][] lines = new String[POSSIBLE_ELEMENTS_COUNT_FACTORIAL][LINE_COUNT];
 	/**
 	 * Keeps the position where to insert the next line in lines array.
 	 */
@@ -63,9 +67,9 @@ public class SodokuGenerator {
 		while (!s.isComplete()) { // new try for each iteration
 			s.reset();
 			boolean reset = false;
-			for (int i = 0; i < 9 && !reset; i++) { // try to find 9 solutions
+			for (int i = 0; i < LINE_COUNT && !reset; i++) { // try to find 9 solutions
 				reset = true; // ends the last loop if no solution is found fast enough
-				for (int j = 0; j < (i*i + 1) * MAX_TRYS; j++)
+				for (int j = 0; j < (i * i + 1) * MAX_TRYS; j++)
 					if (s.addLine(lines[getRandomLineNumber()])) {
 						// possible solution found
 						reset = false; // block reset
@@ -109,8 +113,8 @@ public class SodokuGenerator {
         	// add new line
             System.arraycopy(elements, 0, lines[position], 0, LINE_COUNT);
             position++;
-        }else
-            for (int i = l; i <= r; i++) { 
+        } else
+            for (int i = l; i <= r; i++) {
             	// create copy for recursion
             	String[] elementsCopy = new String[LINE_COUNT];
             	System.arraycopy(elements, 0, elementsCopy, 0, LINE_COUNT);
@@ -183,12 +187,12 @@ public class SodokuGenerator {
 			}
 
 			// Check squares
-			for (int i = 0; i < currentLine; i += 3) // big lines
-				for (int j = 0; j < LINE_COUNT; j += 3) { // big rows
+			for (int i = 0; i < currentLine; i += SQUARE_STEPS) // big lines
+				for (int j = 0; j < LINE_COUNT; j += SQUARE_STEPS) { // big rows
 					String[] existingElements = new String[LINE_COUNT];
 					int index = 0;
-					for (int k = i; k < i + 3; k++) // lines
-						for (int l = j; l < j + 3; l++) // rows
+					for (int k = i; k < i + LINE_COUNT / SQUARE_STEPS; k++) // lines
+						for (int l = j; l < j + LINE_COUNT / SQUARE_STEPS; l++) // rows
 							if (include(existingElements, content[k][l]))
 								return false;
 							else
@@ -278,7 +282,8 @@ public class SodokuGenerator {
 		 * @param newCurrentLine new value of the CurrentLine;
 		 */
 		public void setLine(final int newCurrentLine) {
-			if (newCurrentLine >= 0 && newCurrentLine <= LINE_COUNT) // LINE_COUNT lines means that the sodoku is complete
+			if (newCurrentLine >= 0 && newCurrentLine <= LINE_COUNT)
+				// if LINE_COUNT equals newCurrentLine the sodoku is complete, so <= instead of <
 				currentLine = newCurrentLine;
 		}
 

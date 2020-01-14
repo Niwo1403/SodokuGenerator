@@ -32,9 +32,9 @@ public final class Main {
 	 * @param args arguments passed to the program
 	 */
 	public static void main(final String[] args) {
-		boolean outParmExist = false,
-				helpParmExist = false,
-				countParamExist = false;
+		boolean outParmExist = false;
+		boolean helpParmExist = false;
+		boolean countParamExist = false;
 		String outFile = "";
 		int count = 1;
 
