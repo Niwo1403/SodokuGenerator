@@ -14,6 +14,8 @@ public class SodokuGenerator {
 
 	// Variables
 
+	// Constants
+	
 	/**
 	 * All possible elements for the permutation for lines.
 	 */
@@ -34,6 +36,9 @@ public class SodokuGenerator {
 	 * Step size for checking the squares.
 	 */
 	private static final int SQUARE_STEPS = 3;
+	
+	// Attributes
+	
 	/**
 	 * Saves the all possible solutions.
 	 */

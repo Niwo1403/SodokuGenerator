@@ -1,6 +1,5 @@
 /**
  * Package for SodokuGenerator.
- * @since 1.0
  * @author Nicolai
  * @version 1.0
  */
