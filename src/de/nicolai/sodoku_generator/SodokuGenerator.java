@@ -15,7 +15,7 @@ public class SodokuGenerator {
 	// Variables
 
 	// Constants
-	
+
 	/**
 	 * All possible elements for the permutation for lines.
 	 */
@@ -40,9 +40,9 @@ public class SodokuGenerator {
 	 * Step size for checking the squares.
 	 */
 	private static final int SQUARE_STEPS = 3;
-	
+
 	// Attributes
-	
+
 	/**
 	 * Saves the all possible solutions.
 	 */
@@ -170,7 +170,7 @@ public class SodokuGenerator {
 		/**
 		 * saves the added numbers.
 		 */
-		private String[][] content = new String[LINE_COUNT][LINE_COUNT];
+		private String[][] content = new String[LINE_COUNT][LINE_LENGTH];
 		/**
 		 * Count of the correct line.
 		 */
@@ -197,11 +197,11 @@ public class SodokuGenerator {
 
 			// Check squares
 			for (int i = 0; i < currentLine; i += SQUARE_STEPS) // big lines
-				for (int j = 0; j < LINE_COUNT; j += SQUARE_STEPS) { // big rows
+				for (int j = 0; j < LINE_LENGTH; j += SQUARE_STEPS) { // big rows
 					String[] existingElements = new String[LINE_COUNT];
 					int index = 0;
 					for (int k = i; k < i + LINE_COUNT / SQUARE_STEPS; k++) // lines
-						for (int l = j; l < j + LINE_COUNT / SQUARE_STEPS; l++) // rows
+						for (int l = j; l < j + LINE_LENGTH / SQUARE_STEPS; l++) // rows
 							if (include(existingElements, content[k][l]))
 								return false;
 							else
@@ -236,7 +236,7 @@ public class SodokuGenerator {
 				return false;
 			if (isComplete()) // if sodoku is complete
 				return false;
-			
+
 			// add line to content
 			System.arraycopy(line, 0, content[currentLine], 0, LINE_COUNT);
 
@@ -273,7 +273,7 @@ public class SodokuGenerator {
 		 */
 		public void reset() {
 			setLine(0);
-			content = new String[LINE_COUNT][LINE_COUNT];
+			content = new String[LINE_COUNT][LINE_LENGTH];
 		}
 
 

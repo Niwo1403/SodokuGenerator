@@ -16,6 +16,7 @@ import java.nio.file.Paths;
  *
  */
 public final class Main {
+
 	/**
 	 * Used as help message, if -h is passed.
 	 */
@@ -71,7 +72,8 @@ public final class Main {
 		// Write to outFile or Console, if outFile not passed.
 		if (!outFile.equals("")) { // print to outFile
 			try {
-				final BufferedWriter bw = new BufferedWriter(Files.newBufferedWriter(Paths.get(outFile)));
+				final BufferedWriter bw
+						= new BufferedWriter(Files.newBufferedWriter(Paths.get(outFile)));
 				sg.print((arg) -> {
 					try {
 						bw.write(arg);
