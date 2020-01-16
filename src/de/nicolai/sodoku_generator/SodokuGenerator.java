@@ -1,4 +1,4 @@
-package de.nicolai.SodokuGenerator;
+package de.nicolai.sodoku_generator;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -32,6 +32,10 @@ public class SodokuGenerator {
 	 * Count of lines in the sodoku.
 	 */
 	private static final int LINE_COUNT = 9;
+	/**
+	 * The length of the lines in the sodoku. (count of rows)
+	 */
+	private static final int LINE_LENGTH = 9;
 	/**
 	 * Step size for checking the squares.
 	 */
@@ -134,11 +138,11 @@ public class SodokuGenerator {
 
 	/**
 	 * Prints the created sodoku to the passed method.
-	 * @param outFile Consumer object, which gets the content.
+	 * @param file Consumer object, which gets the content.
 	 */
-	public void print(final Consumer<String> outFile) {
+	public void print(final Consumer<String> file) {
 		// Redirect to ArrayList
-		solutions.forEach(outFile);
+		solutions.forEach(file);
 	}
 
 	// Overrides
@@ -227,10 +231,13 @@ public class SodokuGenerator {
 		 * @param line the line to add to the sodoku.
 		 * @return if the line could be added.
 		 */
-		public boolean addLine(final String[] line) {
-			// add line to content
+		public boolean addLine(final String... line) {
+			if (line.length != LINE_LENGTH) // check if the line length is correct
+				return false;
 			if (isComplete()) // if sodoku is complete
 				return false;
+			
+			// add line to content
 			System.arraycopy(line, 0, content[currentLine], 0, LINE_COUNT);
 
 			// check if line could be added

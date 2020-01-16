@@ -3,11 +3,12 @@
  * @author Nicolai
  * @version 1.0
  */
-package de.nicolai.SodokuGenerator;
+package de.nicolai.sodoku_generator;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Start of program.
@@ -18,7 +19,7 @@ public final class Main {
 	/**
 	 * Used as help message, if -h is passed.
 	 */
-	static final String HELP_INFORMATION = "Call like: \n"
+	private static final String HELP_INFORMATION = "Call like: \n"
 			+ "SodokuCreator.jar [-o <OUTFILE>, -c COUNT]\n"
 			+ "\t-h          - show this help\n"
 			+ "\t-c COUNT    - count of sodokus to generate\n"
@@ -59,7 +60,7 @@ public final class Main {
 
 
 		// Create sodoku
-		SodokuGenerator sg = new SodokuGenerator();
+		final SodokuGenerator sg = new SodokuGenerator();
 		// initial call of generateLines
 		sg.generateLines();
 		// generate needed count of sodokus
@@ -70,7 +71,7 @@ public final class Main {
 		// Write to outFile or Console, if outFile not passed.
 		if (!outFile.equals("")) { // print to outFile
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
+				final BufferedWriter bw = new BufferedWriter(Files.newBufferedWriter(Paths.get(outFile)));
 				sg.print((arg) -> {
 					try {
 						bw.write(arg);
