@@ -15,16 +15,17 @@ import java.nio.file.Paths;
  * @author Nicolai
  *
  */
+@SuppressWarnings("PMD.ShortClassName") // isn't a normal class
 public final class Main {
 
 	/**
 	 * Used as help message, if -h is passed.
 	 */
 	private static final String HELP_INFORMATION = "Call like: \n"
-			+ "SodokuCreator.jar [-o <OUTFILE>, -c COUNT]\n"
-			+ "\t-h          - show this help\n"
-			+ "\t-c COUNT    - count of sodokus to generate\n"
-			+ "\t-o OUTFILE  - redirect output to OUTFILE";
+				+ "SodokuCreator.jar [-o <OUTFILE>, -c COUNT]\n"
+				+ "\t-h          - show this help\n"
+				+ "\t-c COUNT    - count of sodokus to generate\n"
+				+ "\t-o OUTFILE  - redirect output to OUTFILE";
 
 	private Main() { }
 
@@ -32,6 +33,8 @@ public final class Main {
 	 * Processes the passed arguments, create the sodoku and print them.
 	 * @param args arguments passed to the program
 	 */
+	@SuppressWarnings({"PMD.ModifiedCyclomaticComplexity",  // for main: check arguments
+				"PMD.SystemPrintln"}) // for main: print help menu, ...
 	public static void main(final String[] args) {
 		boolean outParmExist = false;
 		boolean helpParmExist = false;
@@ -40,52 +43,50 @@ public final class Main {
 		int count = 1;
 
 		// get arguments
-		for (String arg:args)
-			if (arg.equals("-h"))
+		for (final String arg:args)
+			if ("-h".equals(arg))
 				helpParmExist = true;
-			else if (arg.equals("-c"))
+			else if ("-c".equals(arg))
 				countParamExist = true;
-			else if (arg.equals("-o"))
+			else if ("-o".equals(arg))
 				outParmExist = true;
 			else if (countParamExist) { // first argument after -c
 				count = Integer.parseInt(arg);
 				countParamExist = false;
-			} else if (outParmExist && outFile.equals("")) { // first argument after -o
+			} else if (outParmExist && "".equals(outFile)) { // first argument after -o
 				outFile = arg;
 				outParmExist = false;
 			}
 		if (helpParmExist)
 			System.out.println(HELP_INFORMATION);
-		else if (!outFile.equals(""))
+		else if (!"".equals(outFile))
 			System.out.println("Output directed to \"" + outFile + "\"");
 
 
 		// Create sodoku
-		final SodokuGenerator sg = new SodokuGenerator();
-		// initial call of generateLines
-		sg.generateLines();
+		final SodokuGenerator sGenerator = new SodokuGenerator(true); // including initial call of generateLines
+
 		// generate needed count of sodokus
 		for (int i = 0; i < count; i++)
-			sg.generateSodoku();
+			sGenerator.generateSodoku();
 
 
 		// Write to outFile or Console, if outFile not passed.
-		if (!outFile.equals("")) { // print to outFile
-			try {
-				final BufferedWriter bw
-						= new BufferedWriter(Files.newBufferedWriter(Paths.get(outFile)));
-				sg.print((arg) -> {
+		if ("".equals(outFile)) { // print to console
+			sGenerator.print(System.out::println); // alternative: System.out.println(sg);
+		} else { // print to file
+			try (BufferedWriter writer = new BufferedWriter(Files.newBufferedWriter(Paths.get(outFile)))) {
+				sGenerator.print((arg) -> {
 					try {
-						bw.write(arg);
+						writer.write(arg);
 					} catch (IOException e) {
-						e.printStackTrace();
+						System.out.println("Error, couldn't write to file.");
 					}
 				});
-				bw.close();
+				//writer.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Error, file not found.");
 			}
-		} else // print to Console
-			sg.print(System.out::println); // alternative: System.out.println(sg);
+		}
 	}
 }
