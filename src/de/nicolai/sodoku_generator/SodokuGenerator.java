@@ -32,15 +32,15 @@ public class SodokuGenerator {
 	/**
 	 * Count of lines in the sodoku.
 	 */
-	private static final int LINE_COUNT = 9;
+	public static final int LINE_COUNT = 9;
 	/**
 	 * The length of the lines in the sodoku. (count of rows)
 	 */
-	private static final int LINE_LENGTH = 9;
+	public static final int LINE_LENGTH = 9;
 	/**
 	 * Step size for checking the squares.
 	 */
-	private static final int SQUARE_STEPS = 3;
+	public static final int SQUARE_STEPS = 3;
 
 	// Attributes
 
@@ -175,167 +175,6 @@ public class SodokuGenerator {
 	@Override
 	public String toString() {
 		return String.join("", solutions);
-	}
-
-
-	//Classes
-
-	/**
-	 * Builds a sodoku.
-	 * @author Nicolai
-	 */
-	private class Sodoku {
-
-		// Variables
-
-		/**
-		 * saves the added numbers.
-		 */
-		private String[][] content = new String[LINE_COUNT][LINE_LENGTH];
-		/**
-		 * Count of the correct line.
-		 */
-		private int currentLine;
-
-
-		// Constructor
-
-		/**
-		 * Default constructor.
-		 */
-		public Sodoku() {
-			super();
-		}
-
-		// Methods
-
-		/**
-		 * Tests if the current lines are a possible solution.
-		 * @return true if all current rows could be a possible solution
-		 */
-		private boolean test() {
-			// lines couldn't be wrong
-			// Check rows
-			final String[] existingElements = new String[LINE_COUNT];
-			for (int i = 0; i < LINE_COUNT; i++) {
-				for (int j = 0; j <= currentLine; j++)
-					if (include(existingElements, content[j][i]))
-						return false;
-					else
-						existingElements[j] = content[j][i];
-			}
-
-			// Check squares
-			for (int i = 0; i < currentLine; i += SQUARE_STEPS) // big lines
-				for (int j = 0; j < LINE_LENGTH; j += SQUARE_STEPS) { // big rows
-					int index = 0;
-					for (int k = i; k < i + LINE_COUNT / SQUARE_STEPS; k++) // lines
-						for (int l = j; l < j + LINE_LENGTH / SQUARE_STEPS; l++) // rows
-							if (include(existingElements, content[k][l]))
-								return false;
-							else
-								existingElements[index++] = content[k][l];
-
-				}
-
-			// nothing failed -> return true
-			return true;
-		}
-
-		/**
-		 * Checks if arr contains searchFor. Stops searching, if element is null.
-		 * @param arr array to search in
-		 * @param searchFor	string to search for
-		 * @return true, if arr contains searchFor
-		 */
-		private boolean include(final String[] arr, final String searchFor) {
-			for (final String elm:arr)
-				if (elm != null && elm.equals(searchFor))
-					return true;
-			return false;
-		}
-
-		/**
-		 * Try to add a line.
-		 * @param line the line to add to the sodoku.
-		 * @return if the line could be added.
-		 */
-		public boolean addLine(final String... line) {
-			if (line.length != LINE_LENGTH) // check if the line length is correct
-				return false;
-			if (isComplete()) // if sodoku is complete
-				return false;
-
-			// add line to content
-			System.arraycopy(line, 0, content[currentLine], 0, LINE_COUNT);
-
-			// check if line could be added
-			if (test()) {
-				increaseLines();
-				return true;
-			} else
-				return false;
-		}
-
-		/**
-		 * Creates a text representation of the sodoku.
-		 * @param number
-		 * @return a sting representation of the sodoku,
-		 * including the number in the headline
-		 */
-		public String getStringRepresentation(final int number) {
-			if (isComplete())
-				return "Sodoku number " + number + ":\n" + toString() + "\n";
-			else
-				return "";
-		}
-
-		/**
-		 * Checks if the sodoku is complete.
-		 * @return true if the sodoku got 9 correct lines
-		 */
-		public boolean isComplete() {
-			return currentLine == LINE_COUNT;
-		}
-
-		/**
-		 * Resets the sodoku, to an empty one. (like new initialized)
-		 */
-		public void reset() {
-			setLine(0);
-			content = new String[LINE_COUNT][LINE_LENGTH];
-		}
-
-
-		// Overrides
-
-		@Override
-		public String toString() {
-			String ret = "";
-			for (int i = 0; i < LINE_COUNT; i++)
-				ret += String.join(", ", content[i]) + "\n";
-			return ret;
-		}
-
-		// Getter, Setter
-
-		/**
-		 * Set the currentLine.
-		 * @param newCurrentLine new value of the CurrentLine;
-		 */
-		public void setLine(final int newCurrentLine) {
-			if (newCurrentLine >= 0 && newCurrentLine <= LINE_COUNT)
-				// if LINE_COUNT equals newCurrentLine the sodoku is complete, so <= instead of <
-				currentLine = newCurrentLine;
-		}
-
-		/**
-		 * Increases the currentLine by one.
-		 */
-		public void increaseLines() {
-			setLine(currentLine + 1);
-		}
-
 	}
 
 }

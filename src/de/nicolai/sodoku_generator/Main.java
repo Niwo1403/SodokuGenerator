@@ -33,7 +33,7 @@ public final class Main {
 	 * Processes the passed arguments, create the sodoku and print them.
 	 * @param args arguments passed to the program
 	 */
-	@SuppressWarnings({"PMD.ModifiedCyclomaticComplexity",  // for main: check arguments
+	@SuppressWarnings({"PMD.ModifiedCyclomaticComplexity", "PMD.NPathComplexity", // for main: check arguments
 				"PMD.SystemPrintln"}) // for main: print help menu, ...
 	public static void main(final String[] args) {
 		boolean outParmExist = false;
