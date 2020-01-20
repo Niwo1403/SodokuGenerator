@@ -51,7 +51,7 @@ public class SodokuGenerator {
 	/**
 	 * Saves all possible combinations of different lines.
 	 */
-	private final String[][] lines = new String[LINE_ELEMENTS][LINE_COUNT];
+	private /*static*/ final String[][] lines = new String[LINE_ELEMENTS][LINE_COUNT];
 	/**
 	 * Keeps the position where to insert the next line in lines array.
 	 */
@@ -59,7 +59,7 @@ public class SodokuGenerator {
 	/**
 	 * Saves if the lines are already generated.
 	 */
-	private boolean linesGenerated;
+	private /*static*/ boolean linesGenerated;
 
 
 	// Constructor

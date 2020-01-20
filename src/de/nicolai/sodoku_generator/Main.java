@@ -70,7 +70,6 @@ public final class Main {
 		for (int i = 0; i < count; i++)
 			sGenerator.generateSodoku();
 
-
 		// Write to outFile or Console, if outFile not passed.
 		if ("".equals(outFile)) { // print to console
 			sGenerator.print(System.out::println); // alternative: System.out.println(sg);
