@@ -1,5 +1,7 @@
 package de.nicolai.sodoku_generator;
 
+import java.util.Arrays;
+
 /**
  * @author Nicolai
  *
@@ -27,9 +29,11 @@ public class Sodoku {
 	 */
 	private boolean test() {
 		// lines couldn't be wrong
+
+		final String[] existingElements = new String[SodokuGenerator.LINE_COUNT];
 		// Check rows
 		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++) {
-			final String[] existingElements = new String[SodokuGenerator.LINE_COUNT];
+			Arrays.fill(existingElements, null); // reset Array (contains wrong data from last iteration)
 			for (int j = 0; j <= currentLine; j++)
 				if (include(existingElements, content[j][i]))
 					return false;
@@ -41,7 +45,7 @@ public class Sodoku {
 		for (int i = 0; i < currentLine; i += SodokuGenerator.SQUARE_STEPS) // big lines
 			for (int j = 0; j < SodokuGenerator.LINE_LENGTH;
 					j += SodokuGenerator.SQUARE_STEPS) { // big rows
-				final String[] existingElements = new String[SodokuGenerator.LINE_COUNT];
+				Arrays.fill(existingElements, null); // reset Array (contains wrong data)
 				int index = 0;
 				for (int k = i;	k < i + SodokuGenerator.LINE_COUNT
 						/ SodokuGenerator.SQUARE_STEPS; k++) // lines
