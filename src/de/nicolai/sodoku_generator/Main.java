@@ -33,8 +33,8 @@ public final class Main {
 	 * Processes the passed arguments, create the sodoku and print them.
 	 * @param args arguments passed to the program
 	 */
-	@SuppressWarnings({"PMD.ModifiedCyclomaticComplexity", "PMD.NPathComplexity", // for main: check arguments
-				"PMD.SystemPrintln"}) // for main: print help menu, ...
+	@SuppressWarnings({"PMD.ModifiedCyclomaticComplexity", "PMD.NPathComplexity",
+			"squid:S3776"}) // for main to check arguments
 	public static void main(final String[] args) {
 		boolean outParmExist = false;
 		boolean helpParmExist = false;
@@ -58,9 +58,9 @@ public final class Main {
 				outParmExist = false;
 			}
 		if (helpParmExist)
-			System.out.println(HELP_INFORMATION);
+			println(HELP_INFORMATION);
 		else if (!"".equals(outFile))
-			System.out.println("Output directed to \"" + outFile + "\"");
+			println("Output directed to \"", outFile, "\"");
 
 
 		// Create sodoku
@@ -72,20 +72,28 @@ public final class Main {
 
 		// Write to outFile or Console, if outFile not passed.
 		if ("".equals(outFile)) { // print to console
-			sGenerator.print(System.out::println); // alternative: System.out.println(sg);
+			sGenerator.print(Main::println);
 		} else { // print to file
 			try (BufferedWriter writer = new BufferedWriter(Files.newBufferedWriter(Paths.get(outFile)))) {
-				sGenerator.print((arg) -> {
+				sGenerator.print(arg -> {
 					try {
 						writer.write(arg);
 					} catch (IOException e) {
-						System.out.println("Error, couldn't write to file.");
+						println("Error, couldn't write to file.");
 					}
 				});
-				//writer.close();
 			} catch (IOException e) {
-				System.out.println("Error, file not found.");
+				println("Error, file not found.");
 			}
 		}
+	}
+
+	/**
+	 * Prints the passed arguments joined by "".
+	 * @param out arguments to print
+	 */
+	@SuppressWarnings({"squid:S106", "PMD.SystemPrintln"})// program meant to print to console
+	private static void println(final String... out) {
+		System.out.println(String.join("", out));
 	}
 }

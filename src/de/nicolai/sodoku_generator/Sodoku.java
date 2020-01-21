@@ -28,20 +28,20 @@ public class Sodoku {
 	 * @return true if all current rows could be a possible solution
 	 */
 	private boolean test() {
+		return
 		// lines couldn't be wrong
-
-		final String[] existingElements = new String[SodokuGenerator.LINE_COUNT];
 		// Check rows
-		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++) {
-			Arrays.fill(existingElements, null); // reset Array (contains wrong data from last iteration)
-			for (int j = 0; j <= currentLine; j++)
-				if (include(existingElements, content[j][i]))
-					return false;
-				else
-					existingElements[j] = content[j][i];
-		}
-
+		testRows()
 		// Check squares
+		&& testSquares();
+	}
+
+	/**
+	 * Checks if the squares are correct so far.
+	 * @return true if all squares are correct so far
+	 */
+	private boolean testSquares() {
+		final String[] existingElements = new String[SodokuGenerator.LINE_COUNT];
 		for (int i = 0; i < currentLine; i += SodokuGenerator.SQUARE_STEPS) // big lines
 			for (int j = 0; j < SodokuGenerator.LINE_LENGTH;
 					j += SodokuGenerator.SQUARE_STEPS) { // big rows
@@ -50,15 +50,43 @@ public class Sodoku {
 				for (int k = i;	k < i + SodokuGenerator.LINE_COUNT
 						/ SodokuGenerator.SQUARE_STEPS; k++) // lines
 					for (int l = j; l < j +	SodokuGenerator.LINE_LENGTH
-							/ SodokuGenerator.SQUARE_STEPS;	l++) // rows
-						if (include(existingElements, content[k][l]))
+							/ SodokuGenerator.SQUARE_STEPS;	l++, index++) // rows
+						if (!addElementIfNotIncluded(existingElements, content[k][l], index))
 							return false;
-						else
-							existingElements[index++] = content[k][l];
-
 			}
+		return true;
+	}
 
-		// nothing failed -> return true
+	/**
+	 * Add element in existingElements at position index, 
+	 * if element isn't included in existingElements.
+	 * @param existingElements array to search in
+	 * @param element element to check
+	 * @param index position to add element in existingElements, if it isn't included
+	 * @return true, if element was added at position index
+	 */
+	private boolean addElementIfNotIncluded(final String[] existingElements,
+			final String element, final int index) {
+		if (include(existingElements, element))
+			return false;
+		existingElements[index] = element;
+		return true;
+	}
+
+	/**
+	 * Checks if the rows are correct so far.
+	 * @return true if all rows are correct so far
+	 */
+	private boolean testRows() {
+		final String[] existingElements = new String[SodokuGenerator.LINE_COUNT];
+		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++) {
+			Arrays.fill(existingElements, null); // reset Array (contains wrong data from last iteration)
+			for (int j = 0; j <= currentLine; j++)
+				if (include(existingElements, content[j][i]))
+					return false;
+				else
+					existingElements[j] = content[j][i];
+		}
 		return true;
 	}
 
@@ -93,8 +121,8 @@ public class Sodoku {
 		if (test()) {
 			increaseLines();
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
 
 	/**
@@ -131,10 +159,12 @@ public class Sodoku {
 
 	@Override
 	public final String toString() {
-		String ret = "";
-		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++)
-			ret += String.join(", ", content[i]) + "\n";
-		return ret;
+		final StringBuilder sBuilder = new StringBuilder();
+		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++) {
+			sBuilder.append(String.join(", ", content[i]));
+			sBuilder.append('\n');
+		}
+		return sBuilder.toString();
 	}
 
 	// Getter, Setter

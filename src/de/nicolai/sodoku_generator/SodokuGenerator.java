@@ -3,6 +3,7 @@ package de.nicolai.sodoku_generator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.Random;
 
 
 /**
@@ -51,15 +52,19 @@ public class SodokuGenerator {
 	/**
 	 * Saves all possible combinations of different lines.
 	 */
-	private /*static*/ final String[][] lines = new String[LINE_ELEMENTS][LINE_COUNT];
+	private static final String[][] LINES = new String[LINE_ELEMENTS][LINE_COUNT];
 	/**
 	 * Keeps the position where to insert the next line in lines array.
 	 */
-	private int position;
+	private static int position;
 	/**
 	 * Saves if the lines are already generated.
 	 */
-	private /*static*/ boolean linesGenerated;
+	private static boolean linesGenerated;
+	/**
+	 * Used to generate random numbers.
+	 */
+	private static final Random RANDOMIZER = new Random();
 
 
 	// Constructor
@@ -81,6 +86,45 @@ public class SodokuGenerator {
 			generateLines();
 	}
 
+	// static Methods
+
+	/**
+	 * Generates all possible lines.
+	 */
+	public static final void generateLines() {
+		if (!linesGenerated) {
+			permute(POSSIBLE_ELEMENTS, 0, LINE_COUNT - 1);
+			linesGenerated = true;
+		}
+	}
+
+
+	/**
+	 * Adds permutations to lines array.
+	 * @param elements strings to build permutation of
+	 * @param leftPos left point
+	 * @param rightPos right point
+	 */
+    private static void permute(final String[] elements, final int leftPos, final int rightPos) {
+        if (leftPos == rightPos) {
+        	// add new line
+            System.arraycopy(elements, 0, LINES[position], 0, LINE_COUNT);
+            position++;
+        } else {
+        	// create copy for recursion
+        	String[] elementsCopy = new String[LINE_COUNT];
+            for (int i = leftPos; i <= rightPos; i++) {
+            	System.arraycopy(elements, 0, elementsCopy, 0, LINE_COUNT);
+            	// switch elements
+            	final String tmp = elementsCopy[leftPos];
+            	elementsCopy[leftPos] = elementsCopy[i];
+            	elementsCopy[i] = tmp;
+            	// recursive call
+                permute(elementsCopy, leftPos + 1, rightPos);
+            }
+        }
+    }
+
 	// Methods
 
 	/**
@@ -99,7 +143,7 @@ public class SodokuGenerator {
 			for (int i = 0; i < LINE_COUNT && !reset; i++) { // try to find 9 solutions
 				reset = true; // ends the last loop if no solution is found fast enough
 				for (int j = 0; j < (i * i + 1) * MAX_TRIES; j++)
-					if (sodoku.addLine(lines[getRandomLineNumber()])) {
+					if (sodoku.addLine(LINES[getRandomLineNumber()])) {
 						// possible solution found
 						reset = false; // block reset
 						break;
@@ -117,45 +161,8 @@ public class SodokuGenerator {
 	 * @return the random index of the line
 	 */
 	private int getRandomLineNumber() {
-		return (int) (Math.random() * LINE_ELEMENTS);
+		return RANDOMIZER.nextInt(LINE_ELEMENTS);
 	}
-
-	/**
-	 * Generates all possible lines.
-	 */
-	public final void generateLines() {
-		if (!linesGenerated) {
-			permute(POSSIBLE_ELEMENTS, 0, LINE_COUNT - 1);
-			linesGenerated = true;
-		}
-	}
-
-
-	/**
-	 * Adds permutations to lines array.
-	 * @param elements strings to build permutation of
-	 * @param leftPos left point
-	 * @param rightPos right point
-	 */
-    private void permute(final String[] elements, final int leftPos, final int rightPos) {
-        if (leftPos == rightPos) {
-        	// add new line
-            System.arraycopy(elements, 0, lines[position], 0, LINE_COUNT);
-            position++;
-        } else {
-        	// create copy for recursion
-        	String[] elementsCopy = new String[LINE_COUNT];
-            for (int i = leftPos; i <= rightPos; i++) {
-            	System.arraycopy(elements, 0, elementsCopy, 0, LINE_COUNT);
-            	// switch elements
-            	final String tmp = elementsCopy[leftPos];
-            	elementsCopy[leftPos] = elementsCopy[i];
-            	elementsCopy[i] = tmp;
-            	// recursive call
-                permute(elementsCopy, leftPos + 1, rightPos);
-            }
-        }
-    }
 
 	/**
 	 * Prints the created sodoku to the passed method.
