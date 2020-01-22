@@ -58,7 +58,7 @@ public class Sodoku {
 	}
 
 	/**
-	 * Add element in existingElements at position index, 
+	 * Add element in existingElements at position index,
 	 * if element isn't included in existingElements.
 	 * @param existingElements array to search in
 	 * @param element element to check
@@ -127,7 +127,7 @@ public class Sodoku {
 
 	/**
 	 * Creates a text representation of the sodoku.
-	 * @param number
+	 * @param number number to include in headline for numbering
 	 * @return a sting representation of the sodoku,
 	 * including the number in the headline
 	 */
