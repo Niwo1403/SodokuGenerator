@@ -3,6 +3,7 @@ package de.nicolai.sodoku_generator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
 import java.util.Random;
 
 
@@ -21,7 +22,7 @@ public class SodokuGenerator {
 	/**
 	 * All possible elements for the permutation for lines.
 	 */
-	private static final String[] POSSIBLE_ELEMENTS = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+	protected static final String[] POSSIBLE_ELEMENTS = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
 	/**
 	 * Count of elements in POSSIBLE_ELEMENTS.
 	 */
@@ -29,7 +30,7 @@ public class SodokuGenerator {
 	/**
 	 * Max count of tries to find a new possible line in the sodoku.
 	 */
-	private static final int MAX_TRIES = 5_000;
+	private static final int MAX_TRIES = 4_500; // or: 5000
 	/**
 	 * Count of lines in the sodoku.
 	 */
@@ -140,7 +141,7 @@ public class SodokuGenerator {
 		while (!sodoku.isComplete()) { // new try for each iteration
 			sodoku.reset();
 			boolean reset = false;
-			for (int i = 0; i < LINE_COUNT && !reset; i++) { // try to find 9 solutions
+			for (int i = 0; i < LINE_COUNT - 2 && !reset; i++) { // try to find 7 solutions
 				reset = true; // ends the last loop if no solution is found fast enough
 				for (int j = 0; j < (i * i + 1) * MAX_TRIES; j++)
 					if (sodoku.addLine(LINES[getRandomLineNumber()])) {
@@ -149,11 +150,41 @@ public class SodokuGenerator {
 						break;
 					}
 			}
+			if (generatePenultimateLine(sodoku))
+				generateLastLine(sodoku);
 		}
-
 
 		// add sodoku to solutions
 		solutions.add(sodoku.getStringRepresentation(solutions.size() + 1));
+	}
+
+	/**
+	 * Generate the penultimate line for the passed sodoku.
+	 * @param sodoku sodoku to add the penultimate line for
+	 * @return if generation succeeded
+	 */
+	private boolean generatePenultimateLine(final Sodoku sodoku) {
+		final int currentLine = LINE_COUNT - 2;
+		final String[] lastLineStarts = sodoku.getMissingElementsOfRow(currentLine);
+		String[] line = LINES[getRandomLineNumber()];
+
+		for (int j = 0; j < (currentLine * currentLine + 1) * MAX_TRIES; j++)
+			if (!Sodoku.include(lastLineStarts, line[0]) && sodoku.addLine(line))
+				return true;
+			else
+				line = LINES[getRandomLineNumber()];
+		return false;
+	}
+
+	/**
+	 * Adds the last line to a sodoku, if possible.
+	 * @param sodoku sodoku to add the last line to
+	 */
+	private void generateLastLine(final Sodoku sodoku) {
+		final String[] lastLine = new String[LINE_LENGTH];
+		for (int i = 0; i < SodokuGenerator.LINE_LENGTH; i++)
+			lastLine[i] = sodoku.getMissingElementsOfRow(i)[0];
+		sodoku.addLine(lastLine);
 	}
 
 	/**

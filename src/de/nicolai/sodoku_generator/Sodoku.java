@@ -24,6 +24,36 @@ public class Sodoku {
 	// Methods
 
 	/**
+	 * Get the missing elements in a row.
+	 * @param row to get the missing elements from
+	 * @return the missing elements of the row
+	 */
+	public final String[] getMissingElementsOfRow(final int row) {
+		if (isComplete())
+			return new String[0];
+
+		int mElementPos = 0;
+		final String[] missingElements = new String[SodokuGenerator.LINE_LENGTH - currentLine];
+		final String[] existingElements = getRow(row);
+		for (int i = 0; i < SodokuGenerator.LINE_LENGTH; i++)
+			if (!include(existingElements, SodokuGenerator.POSSIBLE_ELEMENTS[i]))
+				missingElements[mElementPos++] = SodokuGenerator.POSSIBLE_ELEMENTS[i];
+		return missingElements;
+	}
+
+	/**
+	 * Gets a specific row of the sodoku.
+	 * @param row row from the sodoku to get
+	 * @return the elements in the passed row
+	 */
+	private String[] getRow(final int row) {
+		String[] elements = new String[currentLine];
+		for (int i = 0; i < currentLine; i++)
+			elements[i] = content[i][row];
+		return elements;
+	}
+
+	/**
 	 * Tests if the current lines are a possible solution.
 	 * @return true if all current rows could be a possible solution
 	 */
@@ -96,7 +126,7 @@ public class Sodoku {
 	 * @param searchFor	string to search for
 	 * @return true, if arr contains searchFor
 	 */
-	private boolean include(final String[] arr, final String searchFor) {
+	public static final boolean include(final String[] arr, final String searchFor) {
 		for (final String elm:arr)
 			if (elm != null && elm.equals(searchFor))
 				return true;

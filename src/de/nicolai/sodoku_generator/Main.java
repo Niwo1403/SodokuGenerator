@@ -74,7 +74,7 @@ public final class Main {
 		if ("".equals(outFile)) { // print to console
 			sGenerator.print(Main::println);
 		} else { // print to file
-			try (BufferedWriter writer = new BufferedWriter(Files.newBufferedWriter(Paths.get(outFile)))) {
+			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outFile))) {
 				sGenerator.print(arg -> {
 					try {
 						writer.write(arg);
