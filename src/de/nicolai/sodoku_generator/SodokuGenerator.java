@@ -30,7 +30,7 @@ public class SodokuGenerator {
 	/**
 	 * Max count of tries to find a new possible line in the sodoku.
 	 */
-	private static final int MAX_TRIES = 4_500; // or: 5000
+	private static final int MAX_TRIES = 5_000;
 	/**
 	 * Count of lines in the sodoku.
 	 */
@@ -65,7 +65,7 @@ public class SodokuGenerator {
 	/**
 	 * Used to generate random numbers.
 	 */
-	private static final Random RANDOMIZER = new Random();
+	private final IndexGenerator iGenerator = new IndexGenerator(LINE_ELEMENTS);
 
 
 	// Constructor
@@ -141,7 +141,7 @@ public class SodokuGenerator {
 		while (!sodoku.isComplete()) { // new try for each iteration
 			sodoku.reset();
 			boolean reset = false;
-			for (int i = 0; i < LINE_COUNT - 2 && !reset; i++) { // try to find 7 solutions
+			for (int i = 0; i < LINE_COUNT - 1 && !reset; i++) { // try to find 7 solutions
 				reset = true; // ends the last loop if no solution is found fast enough
 				for (int j = 0; j < (i * i + 1) * MAX_TRIES; j++)
 					if (sodoku.addLine(LINES[getRandomLineNumber()])) {
@@ -150,30 +150,11 @@ public class SodokuGenerator {
 						break;
 					}
 			}
-			if (generatePenultimateLine(sodoku))
-				generateLastLine(sodoku);
+			generateLastLine(sodoku);
 		}
 
 		// add sodoku to solutions
 		solutions.add(sodoku.getStringRepresentation(solutions.size() + 1));
-	}
-
-	/**
-	 * Generate the penultimate line for the passed sodoku.
-	 * @param sodoku sodoku to add the penultimate line for
-	 * @return if generation succeeded
-	 */
-	private boolean generatePenultimateLine(final Sodoku sodoku) {
-		final int currentLine = LINE_COUNT - 2;
-		final String[] lastLineStarts = sodoku.getMissingElementsOfRow(currentLine);
-		String[] line = LINES[getRandomLineNumber()];
-
-		for (int j = 0; j < (currentLine * currentLine + 1) * MAX_TRIES; j++)
-			if (!Sodoku.include(lastLineStarts, line[0]) && sodoku.addLine(line))
-				return true;
-			else
-				line = LINES[getRandomLineNumber()];
-		return false;
 	}
 
 	/**
@@ -192,7 +173,7 @@ public class SodokuGenerator {
 	 * @return the random index of the line
 	 */
 	private int getRandomLineNumber() {
-		return RANDOMIZER.nextInt(LINE_ELEMENTS);
+		return iGenerator.getIndex();
 	}
 
 	/**
@@ -215,4 +196,62 @@ public class SodokuGenerator {
 		return String.join("", solutions);
 	}
 
+	// inner classes
+
+	/**
+	 * Used to generate random indexes for accessing the LINE array and get random lines.
+	 * Creates 4 random numbers at a time, which associated lines are as different as possible.
+	 * @author Nicolai
+	 *
+	 */
+	private class IndexGenerator {
+		/**
+		 * For creating random numbers.
+		 */
+		private final Random numberGenerator = new Random();
+		/**
+		 * A quarter of the array length, the indexes are for.
+		 */
+		private final int elementQuarter;
+		/**
+		 * Saves the 4 random numbers.
+		 */
+		private int[] intBuffer = new int[4];
+		/**
+		 * Position of the index in the buffer, which should be returned next. 
+		 */
+		private int bufferPos;
+
+		// Methods
+
+		/**
+		 * Creates an IndexGenerator object matching an array of size arrSize.
+		 * @param arrSize size of the array, the index is for
+		 */
+		public IndexGenerator(final int arrSize) {
+			elementQuarter = arrSize / 4;
+		}
+		
+		/**
+		 * Returns a possible index for the LINE array.
+		 * @return the line index
+		 */
+		public int getIndex() {
+			if (bufferPos >= 4)
+				generateNewNumbers();
+			return intBuffer[bufferPos++];
+		}
+		
+		/**
+		 * Generates the next 4 indexes from a random number.
+		 */
+		private void generateNewNumbers() {
+			final int randNum = numberGenerator.nextInt(LINE_ELEMENTS);
+			bufferPos = 0;
+			intBuffer[0] = randNum;
+			intBuffer[1] = (randNum + elementQuarter) % LINE_ELEMENTS;
+			intBuffer[2] = (randNum + elementQuarter * 2) % LINE_ELEMENTS;
+			intBuffer[3] = (randNum + elementQuarter * 3) % LINE_ELEMENTS;
+		}
+	}
 }
