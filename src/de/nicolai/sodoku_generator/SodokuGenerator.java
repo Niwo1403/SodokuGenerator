@@ -129,9 +129,18 @@ public class SodokuGenerator {
 	// Methods
 
 	/**
-	 * Generates a new sodoku.
+	 * Generates a new sodoku and adds it to the solution.
 	 */
 	public void generateSodoku() {
+		// add sodoku to solutions
+		solutions.add(getSodoku().getStringRepresentation(solutions.size() + 1));
+	}
+
+	/**
+	 * Generates a new sodoku.
+	 * @return the generated sodoku
+	 */
+	public Sodoku getSodoku() {
 		// Generate lines if they aren't now
 		generateLines();
 		// Generate sodokus
@@ -152,9 +161,7 @@ public class SodokuGenerator {
 			}
 			generateLastLine(sodoku);
 		}
-
-		// add sodoku to solutions
-		solutions.add(sodoku.getStringRepresentation(solutions.size() + 1));
+		return sodoku;
 	}
 
 	/**
@@ -199,12 +206,18 @@ public class SodokuGenerator {
 	// inner classes
 
 	/**
-	 * Used to generate random indexes for accessing the LINE array and get random lines.
-	 * Creates 4 random numbers at a time, which associated lines are as different as possible.
+	 * Used to generate random indexes for accessing the LINE array
+	 * and get random lines.
+	 * Creates 4 random numbers at a time,
+	 * which associated lines are as different as possible.
 	 * @author Nicolai
 	 *
 	 */
 	private class IndexGenerator {
+		/**
+		 * The number of generated indexes for each random number.
+		 */
+		private static final int BUFFER_SIZE = 4;
 		/**
 		 * For creating random numbers.
 		 */
@@ -216,9 +229,9 @@ public class SodokuGenerator {
 		/**
 		 * Saves the 4 random numbers.
 		 */
-		private int[] intBuffer = new int[4];
+		private int[] intBuffer = new int[BUFFER_SIZE];
 		/**
-		 * Position of the index in the buffer, which should be returned next. 
+		 * Position of the index in the buffer, which should be returned next.
 		 */
 		private int bufferPos;
 
@@ -229,29 +242,27 @@ public class SodokuGenerator {
 		 * @param arrSize size of the array, the index is for
 		 */
 		public IndexGenerator(final int arrSize) {
-			elementQuarter = arrSize / 4;
+			elementQuarter = arrSize / BUFFER_SIZE;
 		}
-		
+
 		/**
 		 * Returns a possible index for the LINE array.
 		 * @return the line index
 		 */
 		public int getIndex() {
-			if (bufferPos >= 4)
+			if (bufferPos >= BUFFER_SIZE)
 				generateNewNumbers();
 			return intBuffer[bufferPos++];
 		}
-		
+
 		/**
 		 * Generates the next 4 indexes from a random number.
 		 */
 		private void generateNewNumbers() {
 			final int randNum = numberGenerator.nextInt(LINE_ELEMENTS);
 			bufferPos = 0;
-			intBuffer[0] = randNum;
-			intBuffer[1] = (randNum + elementQuarter) % LINE_ELEMENTS;
-			intBuffer[2] = (randNum + elementQuarter * 2) % LINE_ELEMENTS;
-			intBuffer[3] = (randNum + elementQuarter * 3) % LINE_ELEMENTS;
+			for (int i = 0; i < BUFFER_SIZE; i++)
+				intBuffer[i] = (randNum + elementQuarter * i) % LINE_ELEMENTS;
 		}
 	}
 }

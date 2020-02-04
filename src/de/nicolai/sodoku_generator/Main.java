@@ -66,25 +66,30 @@ public final class Main {
 		// Create sodoku
 		final SodokuGenerator sGenerator = new SodokuGenerator(true); // including initial call of generateLines
 
-		// generate needed count of sodokus
-		for (int i = 0; i < count; i++)
-			sGenerator.generateSodoku();
+		if (count >= 2) { // create sodokus
+			// generate needed count of sodokus
+			for (int i = 0; i < count; i++)
+				sGenerator.generateSodoku();
 
-		// Write to outFile or Console, if outFile not passed.
-		if ("".equals(outFile)) { // print to console
-			sGenerator.print(Main::println);
-		} else { // print to file
-			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outFile))) {
-				sGenerator.print(arg -> {
-					try {
-						writer.write(arg);
-					} catch (IOException e) {
-						println("Error, couldn't write to file.");
-					}
-				});
-			} catch (IOException e) {
-				println("Error, file not found.");
+			// Write to outFile or Console, if outFile not passed.
+			if ("".equals(outFile)) { // print to console
+				sGenerator.print(Main::println);
+			} else { // print to file
+				try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outFile))) {
+					sGenerator.print(arg -> {
+						try {
+							writer.write(arg);
+						} catch (IOException e) {
+							println("Error, couldn't write to file.");
+						}
+					});
+				} catch (IOException e) {
+					println("Error, file not found.");
+				}
 			}
+		} else { // create one sodoku and solve it
+			final double difficulty = 30.0;
+			SodokuFrame.displaySodoku(sGenerator.getSodoku(), difficulty);
 		}
 	}
 

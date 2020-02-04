@@ -3,6 +3,7 @@ package de.nicolai.sodoku_generator;
 import java.util.Arrays;
 
 /**
+ * Used to create sodoku and check if it's valid.
  * @author Nicolai
  *
  */
@@ -22,6 +23,16 @@ public class Sodoku {
 
 
 	// Methods
+	/**
+	 * Creates a copy of the content and returns it.
+	 * @return the copy of the content
+	 */
+	protected String[][] getContentCopy() {
+		final String[][] contentCopy = new String[SodokuGenerator.LINE_COUNT][SodokuGenerator.LINE_LENGTH];
+		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++)
+			System.arraycopy(content[i], 0, contentCopy[i], 0, SodokuGenerator.LINE_LENGTH);
+		return contentCopy;
+	}
 
 	/**
 	 * Get the missing elements in a row.
@@ -57,7 +68,7 @@ public class Sodoku {
 	 * Tests if the current lines are a possible solution.
 	 * @return true if all current rows could be a possible solution
 	 */
-	private boolean test() {
+	protected boolean test() {
 		return
 		// lines couldn't be wrong
 		// Check rows
@@ -108,14 +119,33 @@ public class Sodoku {
 	 * @return true if all rows are correct so far
 	 */
 	private boolean testRows() {
-		final String[] existingElements = new String[SodokuGenerator.LINE_COUNT];
-		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++) {
+		final String[] existingElements = new String[currentLine + 1];
+		for (int i = 0; i < SodokuGenerator.LINE_LENGTH; i++) {
 			Arrays.fill(existingElements, null); // reset Array (contains wrong data from last iteration)
 			for (int j = 0; j <= currentLine; j++)
 				if (include(existingElements, content[j][i]))
 					return false;
 				else
 					existingElements[j] = content[j][i];
+		}
+		return true;
+	}
+
+	/**
+	 * Tests if all lines are correct;
+	 * only used in subclass,
+	 * since lines created by generating the sodoku couldn't be wrong.
+	 * @return true, if all lines are correct
+	 */
+	protected boolean testLines() {
+		final String[] existingElements = new String[SodokuGenerator.LINE_LENGTH];
+		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++) {
+			Arrays.fill(existingElements, null); // reset Array (contains wrong data from last iteration)
+			for (int j = 0; j < SodokuGenerator.LINE_LENGTH; j++)
+				if (include(existingElements, content[i][j]))
+					return false;
+				else
+					existingElements[j] = content[i][j];
 		}
 		return true;
 	}
@@ -207,6 +237,15 @@ public class Sodoku {
 		if (newCurrentLine >= 0 && newCurrentLine <= SodokuGenerator.LINE_COUNT)
 			// if LINE_COUNT equals newCurrentLine the sodoku is complete, so <= instead of <
 			currentLine = newCurrentLine;
+	}
+
+	/**
+	 * Sets the content of the sodoku.
+	 * @param newContent the new content for the sodoku
+	 */
+	protected void setContent(final String[]... newContent) {
+		for (int i = 0; i < SodokuGenerator.LINE_COUNT; i++)
+			System.arraycopy(newContent[i], 0, content[i], 0, SodokuGenerator.LINE_LENGTH);
 	}
 
 	/**
