@@ -19,17 +19,17 @@ import java.util.Random;
  */
 public class SodokuFrame {
 	/**
-	 * Size of a square in the sodoku.
-	 */
-	private static final int SQUARE_SIZE = 50;
-	/**
 	 * Added to frame width to display the frame better.
 	 */
-	private static final int ADD_WIDTH = 18;
+	public static final int ADD_WIDTH = 18;
 	/**
 	 * Added to frame height to display the frame better.
 	 */
-	private static final int ADD_HEIGHT = 40;
+	public static final int ADD_HEIGHT = 40;
+	/**
+	 * Size of a square in the sodoku.
+	 */
+	private static final int SQUARE_SIZE = 50;
 	/**
 	 * Reference for the size of the free space surround the buttons.
 	 */
@@ -78,6 +78,10 @@ public class SodokuFrame {
 	 * Used to generate random numbers for random sodoku fields.
 	 */
 	private final Random rand = new Random();
+	/**
+	 * A function to call if the 'Exit' button is pressed.
+	 */
+	private Runnable exitFunction;
 
 	// Constructor
 
@@ -103,6 +107,14 @@ public class SodokuFrame {
 	}
 
 	// Methods
+
+	/**
+	 * Sets a function to call if the 'Exit' button is pressed.
+	 * @param func
+	 */
+	public void onExitBtnClick(final Runnable func) {
+		exitFunction = func;
+	}
 
 	/**
 	 * Creates a JFrame, displaying the sodoku to solve.
@@ -146,7 +158,7 @@ public class SodokuFrame {
 		exitSodoku.setBounds(buttonX, buttonY + buttonDistance, BUTTON_WIDTH, BUTTON_HEIGHT);
 		showField.addActionListener(e -> help());
 		showSolution.addActionListener(e -> solve());
-		exitSodoku.addActionListener(e -> frame.dispose());
+		exitSodoku.addActionListener(this::exitButtonPressed);
 		initJTextFields();
 		mapFields(fields);
 		panel.setBounds(0, 0, finalWidth, finalHeight);
@@ -157,6 +169,16 @@ public class SodokuFrame {
 		panel.add(showSolution);
 		panel.add(exitSodoku);
 		return panel;
+	}
+
+	/**
+	 * Called, when the exit button is pressed.
+	 * @param ignoredEvent the passed event, going to be ignored
+	 */
+	private void exitButtonPressed(@SuppressWarnings("PMD.UnusedFormalParameter") final Object ignoredEvent) {
+		frame.dispose();
+		if (exitFunction != null)
+			exitFunction.run();
 	}
 
 	/**

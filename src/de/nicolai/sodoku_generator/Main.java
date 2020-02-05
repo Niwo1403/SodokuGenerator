@@ -88,8 +88,7 @@ public final class Main {
 				}
 			}
 		} else { // create one sodoku and solve it
-			final double difficulty = 30.0;
-			SodokuFrame.displaySodoku(sGenerator.getSodoku(), difficulty);
+			new StartFrame();
 		}
 	}
 
