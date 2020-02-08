@@ -59,14 +59,16 @@ public class SodokuGenerator {
 	 */
 	private static int position;
 	/**
-	 * Saves if the lines are already generated.
-	 */
-	private static boolean linesGenerated;
-	/**
 	 * Used to generate random numbers.
 	 */
 	private final IndexGenerator iGenerator = new IndexGenerator(LINE_ELEMENTS);
 
+	/**
+	 * Generates all possible lines.
+	 */
+	static {
+		permute(POSSIBLE_ELEMENTS, 0, LINE_COUNT - 1);
+	}
 
 	// Constructor
 
@@ -83,22 +85,9 @@ public class SodokuGenerator {
 	 */
 	public SodokuGenerator(final boolean generateLines) {
 		super();
-		if (generateLines)
-			generateLines();
 	}
 
 	// static Methods
-
-	/**
-	 * Generates all possible lines.
-	 */
-	public static final void generateLines() {
-		if (!linesGenerated) {
-			permute(POSSIBLE_ELEMENTS, 0, LINE_COUNT - 1);
-			linesGenerated = true;
-		}
-	}
-
 
 	/**
 	 * Adds permutations to lines array.
@@ -141,8 +130,6 @@ public class SodokuGenerator {
 	 * @return the generated sodoku
 	 */
 	public Sodoku getSodoku() {
-		// Generate lines if they aren't now
-		generateLines();
 		// Generate sodokus
 		final Sodoku sodoku = new Sodoku();
 
